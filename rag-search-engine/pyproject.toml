@@ -6,4 +6,11 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "nltk==3.9.1",
+    "sentence-transformers>=5.2.0",
+]
+
+[tool.uv.workspace]
+members = [
+    "rag-search-engine",
+    "rag-boot-dev",
 ]
