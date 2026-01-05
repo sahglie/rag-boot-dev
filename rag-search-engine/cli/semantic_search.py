@@ -10,9 +10,32 @@ class SemanticSearch:
 
     def __init__(self):
         self.model = SentenceTransformer("all-MiniLM-L6-v2")
-        self.embeddings = None
-        self.documents = None
+        self.embeddings = []
+        self.documents = {}
         self.document_map = {}
+
+    def search(self, query, limit) -> list[dict[str, Any]]:
+        if self.embeddings is None:
+            raise ValueError("Call `load_or_create_embeddings` first")
+
+        embedding = self.generate_embedding(query)
+
+        similarity_scores = []
+        for i in range(len(self.documents)):
+            score = cosine_similarity(embedding, self.embeddings[i])
+            d = self.documents[i]
+            entry = {
+                "score": score,
+                "title": d["title"],
+                "description": d["description"],
+            }
+            similarity_scores.append(entry)
+
+        similarity_scores = sorted(
+            similarity_scores, key=lambda item: item["score"], reverse=True
+        )
+
+        return similarity_scores[:limit]
 
     def generate_embedding(self, text: str):
         if not text.strip():
@@ -83,3 +106,23 @@ def verify_embeddings():
     print(
         f"Embeddings shape: {embeddings.shape[0]} vectors in {embeddings.shape[1]} dimensions"
     )
+
+
+def embed_query_text(query: str):
+    search = SemanticSearch()
+    embedding = search.generate_embedding(query)
+
+    print(f"Query: {query}")
+    print(f"First 5 dimensions: {embedding[:5]}")
+    print(f"Shape: {embedding.shape}")
+
+
+def cosine_similarity(v1, v2) -> float:
+    dot = np.dot(v1, v2)
+    n1 = np.linalg.norm(v1)
+    n2 = np.linalg.norm(v2)
+
+    if n1 == 0 or n2 == 0:
+        return 0.0
+
+    return dot / (n1 * n2)
