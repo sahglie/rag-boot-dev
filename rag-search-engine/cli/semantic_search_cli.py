@@ -3,12 +3,13 @@
 import argparse
 import json
 from typing import Any
+
 from semantic_search import (
     SemanticSearch,
+    embed_query_text,
+    embed_text,
     verify_embeddings,
     verify_model,
-    embed_text,
-    embed_query_text,
 )
 
 
@@ -29,6 +30,10 @@ def main():
     search_parser.add_argument("text", type=str)
     search_parser.add_argument("--limit", type=int, default=5)
 
+    chunk_parser = subparsers.add_parser("chunk", help="Chunk text")
+    chunk_parser.add_argument("text", type=str)
+    chunk_parser.add_argument("--chunk-size", type=int, default=200)
+
     args = parser.parse_args()
 
     match args.command:
@@ -45,6 +50,21 @@ def main():
                 print(
                     f"{idx}. {m['title']} (score: {m['score']:.4f})\n{m['description'][:100]}...\n"
                 )
+
+        case "chunk":
+            chunks = []
+            words = args.text.split()
+            while len(words):
+                if len(words) >= args.chunk_size:
+                    chunk = words[: args.chunk_size]
+                else:
+                    chunk = words
+
+                chunks.append(" ".join(chunk))
+                words = words[args.chunk_size :]
+
+            for i, chunk in enumerate(chunks, 1):
+                print(f"{i}. {chunk}")
 
         case "embed_text":
             embed_text(args.text)

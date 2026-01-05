@@ -3,4 +3,9 @@ name = "rag-boot-dev"
 version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.9"
-dependencies = []
+dependencies = [
+    "basedpyright>=1.37.0",
+    "numpy>=2.0.2",
+    "ruff>=0.14.10",
+    "sentence-transformers>=5.1.2",
+]

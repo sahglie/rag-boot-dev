@@ -1,8 +1,9 @@
-from sentence_transformers import SentenceTransformer
-import numpy as np
 import json
-from typing import Any
 from pathlib import Path
+from typing import Any
+
+import numpy as np
+from sentence_transformers import SentenceTransformer
 
 
 class SemanticSearch:
@@ -55,7 +56,7 @@ class SemanticSearch:
         self.embeddings = self.model.encode(docs, show_progress_bar=True)
         np.save(self.MOVIE_EMBEDDINGS_FILE, self.embeddings)
 
-        return self.embeddings
+        return self.embeddings.tolist()
 
     def load_or_create_embeddings(self, documents: list[dict]):
         self.documents = documents
