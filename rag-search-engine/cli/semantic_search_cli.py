@@ -43,7 +43,11 @@ def main():
     sem_chunk_parser.add_argument("--max-chunk-size", type=int, default=4)
     sem_chunk_parser.add_argument("--overlap", type=int, default=0)
 
-    embed_chunk_parser = subparsers.add_parser("embed_chunks")
+    subparsers.add_parser("embed_chunks")
+
+    search_chunked_parser = subparsers.add_parser("search_chunked")
+    search_chunked_parser.add_argument("text")
+    search_chunked_parser.add_argument("--limit", type=int, default=10)
 
     args = parser.parse_args()
 
@@ -85,6 +89,15 @@ def main():
             search.load_or_create_chunk_embeddings(movies)
 
             print(f"Generated {len(search.chunk_embeddings)} chunked embeddings")
+        case "search_chunked":
+            movies = load_movies()
+            search = ChunkedSemanticSearch()
+            search.load_or_create_chunk_embeddings(movies)
+
+            movies = search.search(args.text)
+            for i, m in enumerate(movies, 1):
+                print(f"\n{i}. {m['title']} (score: {m['score']: .4f})")
+                print(f"    {m['document']}...")
         case _:
             parser.print_help()
 
