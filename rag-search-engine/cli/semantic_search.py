@@ -128,28 +128,30 @@ class ChunkedSemanticSearch(SemanticSearch):
         self.document_map = {d["id"]: d for d in documents}
 
         all_chunks: list[str] = []
-        self.chunk_metadata.clear()
+        chunk_metadata = []
 
-        for doc_idx, d in enumerate(self.documents):
+        for idx, d in enumerate(self.documents):
             if d["description"].strip():
-                doc_chunks = chunk(
+                chunks = chunk(
                     d["description"],
                     regexp=self.SENTENCE_REGEXP,
                     chunk_size=4,
                     overlap=1,
                 )
 
-                for chunk_idx, c in enumerate(doc_chunks):
+                for i, c in enumerate(chunks):
                     all_chunks.append(c)
-                    self.chunk_metadata.append(
+                    chunk_metadata.append(
                         {
-                            "movie_idx": doc_idx,
-                            "chunk_idx": chunk_idx,
-                            "total_chunks": len(doc_chunks),
+                            "movie_idx": idx,
+                            "chunk_idx": i,
+                            "total_chunks": len(chunks),
                         }
                     )
 
-        self.chunk_embeddings = self.model.encode(all_chunks)
+        self.chunk_embeddings = self.model.encode(all_chunks, show_progress_bar=True)
+        self.chunk_metadata = chunk_metadata
+
         np.save(self.MOVIE_CHUNK_EMBEDDINGS, self.chunk_embeddings)
 
         with open(self.CHUNK_METADATA_JSON, "w") as fd:
