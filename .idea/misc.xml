@@ -6,8 +6,11 @@
   <component name="ProjectRootManager" version="2" project-jdk-name="uv (rag-boot-dev)" project-jdk-type="Python SDK" />
   <component name="PyrightConfiguration">
     <option name="enabled" value="true" />
+    <option name="inlayHints" value="false" />
+    <option name="inspections" value="false" />
   </component>
   <component name="RuffConfiguration">
     <option name="enabled" value="true" />
+    <option name="inspections" value="false" />
   </component>
 </project>

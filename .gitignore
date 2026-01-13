@@ -4,9 +4,9 @@ __pycache__/
 build/
 dist/
 wheels/
-/data/
-/cache/
+/rag-search-engine/data/
 *.egg-info
 
 # Virtual environments
 .venv
+/rag-search-engine/cache/
